@@ -4,14 +4,14 @@ var util = require('util'),
 
 function download(urlStr){
 	var u = url.parse(urlStr),
-		client = http.createClient(u.port || 80, u.hostname),
-		request = client.request('GET', 
-							u.pathname,
-							{ host: u.hostname}
-							);
-	request.end();
+		options = {
+			host: u.hostname,
+			port: u.port || 80,
+			path: u.path,
+			method: 'GET'
+		};
 
-	request.on('response', function(response){
+	var request = http.request(options, function(response){
 		console.log(response.statusCode);
 		for(var i in response.headers){
 			console.log("%s : %s", i, response.headers[i]);
@@ -26,6 +26,12 @@ function download(urlStr){
 			console.log('');
 		});
 	});
+	
+	// error handler
+	request.on('error', function(e){
+		console.log('problem with request '+ e.message);
+	});
+	request.end();
 }
 
 download(process.argv[2]);

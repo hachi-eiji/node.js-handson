@@ -2,6 +2,49 @@ var util = require('util'),
 	url  = require('url'),
 	http = require('http');
 
+/**
+ * レスポンスを格納する関数
+ */
+var sites = function(checkSiteNum){
+	var that = {
+		downloads: [],		 // 結果を格納するオブジェクト
+		max: checkSiteNum,	// リクエストを投げる予定の数
+		done: 0				// リクエストを投げた数
+	};
+
+	// レスポンスを格納
+	var add = function(index, response, body){
+		this.downloads[index] = {
+			response: response,
+			body: body
+		};
+		this.done = that.done + 1;
+	};
+	// 全てのリクエストを処理したか
+	var isFinish = function(){
+		return this.done === this.max;
+	};
+	// 全ての結果を表示
+	var printAll = function(){
+		for(var i in this.downloads){
+			var r = this.downloads[i];
+			var res = r.response;
+			console.log(res.statusCode);
+			for(var j in res.headers){
+				console.log("%s : %s", j, res.headers[j]);
+			}
+			console.log('');
+			util.print(r.body);
+			console.log('');
+		}
+	};
+
+	that.add = add;
+	that.isFinish = isFinish;
+	that.printAll = printAll;
+	return that;
+}
+
 function download(urlStr, index){
 	var u = url.parse(urlStr),
 		requestOptions = {
@@ -32,32 +75,12 @@ for(var i = 2; i < len; i++){
 }
 
 // 全部の処理を待つための関数定義
-var downloads = new Array(argv.length-2),
-	max = len-2,
-	done = 0;
+var downloadSite = sites(len-2);
 
 function notifyDone(index, res, body){
-	downloads[index] = {
-		response: res,
-		body: body
-	};
-	done = done + 1;
-	if(done == max){
-		allDone();
+	downloadSite.add(index, res, body);
+	if(downloadSite.isFinish()){
+		downloadSite.printAll();
 	}
 }
 
-// 全部の処理が終了したら実行
-function allDone(){
-	for(var i in downloads){
-		var r = downloads[i];
-		console.log("----[%s]", i);
-		console.log(r.response.statusCode);
-		for(var j in r.response.headers){
-			console.log("%s : %s", j, r.response.headers[j]);
-		}
-		console.log('');
-		util.print(r.body);
-		console.log('');
-	}
-}

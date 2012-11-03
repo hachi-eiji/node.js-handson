@@ -68,6 +68,15 @@ function download(urlStr, index){
 	req.end();
 }
 
+function notifyDone(index, res, body){
+	downloadSite.add(index, res, body);
+	if(downloadSite.isFinish()){
+		downloadSite.printAll();
+	}
+}
+
+
+// ここからメイン
 var argv = process.argv;
 var len = argv.length;
 for(var i = 2; i < len; i++){
@@ -76,11 +85,3 @@ for(var i = 2; i < len; i++){
 
 // 全部の処理を待つための関数定義
 var downloadSite = sites(len-2);
-
-function notifyDone(index, res, body){
-	downloadSite.add(index, res, body);
-	if(downloadSite.isFinish()){
-		downloadSite.printAll();
-	}
-}
-

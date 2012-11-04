@@ -58,7 +58,6 @@ function download(urlStr, index){
     port: u.port || 80,
     path: u.path
   };
-  var ev = new EventEmitter();
 
   http.get(options, function(res){
     var buf = '';
@@ -76,22 +75,22 @@ function download(urlStr, index){
   }).on('error', function(e){
     console.log('get error %s', e.message);
   });
-
-  return ev;
 }
 
 // main
 var argv = process.argv;
 var len = argv.length;
 var downloadSite = sites(len-2);
+var ev = new EventEmitter();
+
+// イベントハンドラ登録
+ev.on('notify', function(index, res, buf){
+  downloadSite.add(index, res, buf);
+  if(downloadSite.isFinish()){
+    downloadSite.showAll();
+  }
+});
 
 for(var i = 2; i < len ; i++){
-  var ev = download(argv[i], i-2); 
-  // イベントハンドラ登録
-  ev.on('notify', function(index, res, buf){
-    downloadSite.add(index, res, buf);
-    if(downloadSite.isFinish()){
-      downloadSite.showAll();
-    }
-  });
+  download(argv[i], i-2); 
 }

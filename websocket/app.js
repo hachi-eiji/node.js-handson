@@ -42,10 +42,6 @@ socket.on('connection', function(client){
   };
   bot.on('status', fun);
 
-  client.on('message', function(message){
-    util.log('receive message');
-  });
-
   client.on('disconnect', function(){
     util.log('call disconnect');
     // クライアントが消えたらイベントを外す

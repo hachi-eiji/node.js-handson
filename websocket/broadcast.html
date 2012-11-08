@@ -1,0 +1,26 @@
+<html>
+	<body>
+		<h1>Twtter UserStream with WebSocket(<span id="connections"></span>)</h1>
+		<p>
+		Hello WebSocket Streaming
+		</p>
+		<div id="statues"></div>
+	</body>
+</html>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	var socket = io.connect('http://localhost:3000');
+	socket.on('message', function(msg){
+    console.log('get message');
+		var status = eval('(' + msg + ')');
+		if(typeof status === 'object'){
+			var elm = document.createElement('p');
+			elm.innerHTML = status.user.screen_name + ':' + status.text;
+			document.getElementById('statues').appendChild(elm);
+		}else if(typeof status === 'number'){
+			document.getElementById('connections').innerHTML = msg;
+		}else{
+			alert(msg);
+		}
+	});
+</script>

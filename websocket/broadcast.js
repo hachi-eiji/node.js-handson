@@ -6,10 +6,7 @@ var io   = require('socket.io'),
     io = require('socket.io');
 
 var TW_OPTION = {
-  consumerKey:'PFpel3BjsAVbTykbnqUCfQ',
-  consumerSecret: 'NOOglHjxU7YGXQ5xfi56ZJDHwknIQKwnWezWuADdLoQ',
-  accessKey: '252601740-6P6ZMTkZgp5RPq89pzLg68yPCOh5YSl37DEoBInY',
-  accessSecret:  'tQIyKTb09hv4i5YRZph5vzZVwgnNbU9TYagzBzQ'
+
 };
 
 var bot = new TwBot(TW_OPTION);
